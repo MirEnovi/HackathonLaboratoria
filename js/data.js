@@ -195,36 +195,40 @@ const htmlhome = () => {
     const searchLabel = document.getElementById('search-label');
     
 
-    // const filterEmpresas = (empresas, search) => {
-    //     let resultadoEmpresas = empresas.filter((i) =>
-    //         i.company.toLowerCase().indexOf(search.toLowerCase()) > -1
-    //     );
-    //     return resultadoEmpresas;
-    // };
-
-    
-
     const search = () => {
-        let empresa = 'Citibanamex' //searchLabel.value;
+        let empresa = searchLabel.value;
         let empresas= db.collection("reviews");
         var query = empresas.where("company", "==", `${empresa}`);
-        console.log(query);
-
-        // let empresa = searchLabel.value;
-        // if(empresa===''){
-        //     alert('no has escrito ningun nombre');
-        // }else{
-        //     const resultSearch = filterStudents(empresas, empresa);
-        //     console.log(resultSearch);
-        //     if (resultSearch.length>0) {
-        //         // listaResult.innerHTML='';
-        //         // drawTable(resultSearch);
-        //     } else {
-        //         alert('No existe registro');
-        //     };
-        // }
+        empresas.where("company", "==", `${empresa}`)
+        .get()
+        .then(function (snap){
+            if (snap.empty) alert("Sin resultados")
+            reviews.innerHTML='';
+            snap.forEach(doc => {
+                reviews.innerHTML=`
+                <div class="card my-3">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">${doc.data().company}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${doc.data().job} 
+                        <div class="float-right"><span class="mr-3">FECHA</span>
+                        <span class="mr-3" onclick="editReview('${doc.id}', 
+                        '${doc.data().job}', '${doc.data().company}', '${doc.data().rating}', 
+                        '${doc.data().recommendation}', '${doc.data().comment}')"><i class="far fa-edit"></i></span>
+                        <span class="mr-3" onclick="deleteReview('${doc.id}')"><i class="far fa-trash-alt"></i></span></div>
+                        </h6>
+                        <h6 class="card-title">Calificacion: ${doc.data().rating}</h6>
+                        <h6 class="card-title">Recomiendas este lugar? ${doc.data().recommendation}</h6>
+                        <h6 class="card-title">Comentarios</h6>
+                        <p class="card-text">${doc.data().comment}</p>
+                    </div>
+                </div>
+                `;
+            })
+        })
     };
-    search();
+    
+    clickbtnSearch.addEventListener('click', search);
+
     
     //salir
     document.getElementById('salir').addEventListener('click',
