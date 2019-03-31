@@ -196,6 +196,7 @@ const htmlhome = () => {
     
 
     const search = () => {
+        // window.map();
         let empresa = searchLabel.value;
         let empresas= db.collection("reviews");
         var query = empresas.where("company", "==", `${empresa}`);
